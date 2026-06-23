@@ -1,0 +1,43 @@
+.root { display:flex; flex-direction:column; gap:24px; animation:fadeUp 0.35s ease; }
+.breadcrumb { display:flex; align-items:center; gap:8px; font-size:14px; }
+.back { display:flex; align-items:center; gap:6px; color:var(--gray-400); transition:var(--transition); }
+.back:hover { color:var(--orange-400); }
+.breadSep { color:var(--border-light); }
+.breadCurrent { color:var(--gray-300); }
+
+.pageHeader { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+.title { font-size:clamp(24px,3vw,34px); font-weight:800; }
+.vin   { font-size:13px; color:var(--gray-400); font-family:monospace; letter-spacing:0.06em; display:block; margin-top:4px; }
+.actions { display:flex; gap:10px; flex-wrap:wrap; }
+
+.grid { display:grid; grid-template-columns:280px 1fr; gap:20px; align-items:start; }
+.batteryCard { display:flex; flex-direction:column; gap:20px; }
+.cardTitle { font-size:16px; font-weight:700; margin-bottom:4px; }
+.cardTitleRow { display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
+.telTime { display:flex; align-items:center; gap:5px; font-size:12px; color:var(--gray-400); }
+.arcCenter { display:flex; justify-content:center; }
+.batteryStats { display:flex; justify-content:space-around; }
+.bStat { display:flex; flex-direction:column; align-items:center; gap:4px; }
+.bVal  { font-family:'Syne',sans-serif; font-size:18px; font-weight:700; }
+.bLabel { font-size:11px; color:var(--gray-400); text-transform:uppercase; letter-spacing:0.08em; }
+
+.infoCol { display:flex; flex-direction:column; gap:16px; }
+.infoCard { padding:20px 24px; }
+.dl { display:flex; flex-direction:column; gap:0; }
+.row { display:flex; justify-content:space-between; align-items:baseline; padding:10px 0; border-bottom:1px solid var(--border); }
+.row:last-child { border-bottom:none; }
+.dt  { font-size:13px; color:var(--gray-400); }
+.dd  { font-size:14px; font-weight:500; text-align:right; }
+
+.skH    { height:36px; border-radius:6px; margin-bottom:20px; }
+.skCard { height:280px; border-radius:var(--radius-lg); }
+.errorState { padding:40px; text-align:center; }
+
+.chargeForm { display:flex; flex-direction:column; gap:16px; }
+.checkLabel { display:flex; align-items:center; gap:10px; font-size:14px; font-weight:500; cursor:pointer; }
+.checkbox { width:18px; height:18px; accent-color:var(--orange-500); cursor:pointer; }
+.formActions { display:flex; gap:12px; justify-content:flex-end; padding-top:8px; }
+.deleteMsg { font-size:14px; color:var(--gray-300); line-height:1.7; margin-bottom:20px; }
+
+@media (max-width:768px) { .grid { grid-template-columns:1fr; } }
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:none} }

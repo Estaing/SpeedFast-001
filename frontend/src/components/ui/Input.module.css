@@ -1,0 +1,27 @@
+.wrapper { display: flex; flex-direction: column; gap: 6px; }
+
+.label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gray-300);
+  letter-spacing: 0.01em;
+}
+
+.input {
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  color: var(--white);
+  font-size: 14px;
+  padding: 11px 14px;
+  transition: var(--transition);
+  width: 100%;
+  outline: none;
+}
+.input::placeholder { color: var(--gray-500); }
+.input:focus { border-color: var(--orange-500); box-shadow: 0 0 0 3px var(--orange-glow); }
+.input:hover:not(:focus) { border-color: var(--border-light); filter: brightness(1.1); }
+.hasError { border-color: var(--red) !important; box-shadow: 0 0 0 3px rgba(239,68,68,0.15) !important; }
+
+.error { font-size: 12px; color: var(--red); }
+.hint  { font-size: 12px; color: var(--gray-400); }

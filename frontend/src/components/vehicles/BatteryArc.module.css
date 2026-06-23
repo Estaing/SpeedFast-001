@@ -1,0 +1,11 @@
+.wrapper { position: relative; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.center  { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.level   { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; line-height: 1; }
+.chargingDot {
+  width: 8px; height: 8px; border-radius: 50%;
+  animation: pulse-orange 1.4s ease-in-out infinite;
+}
+@keyframes pulse-orange {
+  0%,100% { box-shadow: 0 0 0 0 currentColor; opacity: 1; }
+  50%      { box-shadow: 0 0 0 6px transparent; opacity: 0.7; }
+}

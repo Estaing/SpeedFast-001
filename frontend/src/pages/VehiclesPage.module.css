@@ -1,0 +1,14 @@
+.root { display:flex; flex-direction:column; gap:24px; animation:fadeUp 0.35s ease; }
+.header { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+.title { font-size:28px; font-weight:800; }
+.sub   { font-size:14px; color:var(--gray-400); margin-top:4px; }
+.searchBar { display:flex; align-items:center; gap:10px; background:var(--bg-surface); border:1.5px solid var(--border-light); border-radius:var(--radius-sm); padding:0 14px; }
+.searchIcon { color:var(--gray-500); flex-shrink:0; }
+.searchInput { background:none; border:none; outline:none; color:var(--white); font-size:14px; width:100%; padding:11px 0; }
+.searchInput::placeholder { color:var(--gray-500); }
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; }
+.skCard { height:240px; border-radius:var(--radius-lg); }
+.empty { text-align:center; padding:40px; color:var(--gray-400); display:flex; flex-direction:column; align-items:center; gap:16px; }
+.pagination { display:flex; align-items:center; justify-content:center; gap:16px; }
+.pageInfo { font-size:14px; color:var(--gray-300); }
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:none} }

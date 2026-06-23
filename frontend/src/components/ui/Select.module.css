@@ -1,0 +1,21 @@
+.wrapper { display: flex; flex-direction: column; gap: 6px; }
+.label { font-size: 13px; font-weight: 500; color: var(--gray-300); }
+.selectWrapper { position: relative; }
+.select {
+  appearance: none; -webkit-appearance: none;
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  color: var(--white);
+  font-size: 14px;
+  padding: 11px 36px 11px 14px;
+  width: 100%;
+  cursor: pointer;
+  transition: var(--transition);
+  outline: none;
+}
+.select:focus { border-color: var(--orange-500); box-shadow: 0 0 0 3px var(--orange-glow); }
+.select option { background: var(--bg-secondary); }
+.hasError { border-color: var(--red) !important; }
+.arrow { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--gray-400); font-size: 12px; }
+.error { font-size: 12px; color: var(--red); }

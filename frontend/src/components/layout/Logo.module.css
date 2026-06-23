@@ -1,0 +1,9 @@
+.logo  { display: flex; align-items: center; gap: 10px; }
+.sm .text { gap: 0; }
+.text  { display: flex; align-items: baseline; }
+.speed { font-family: 'Syne', sans-serif; font-weight: 800; color: var(--white); }
+.fast  { font-family: 'Syne', sans-serif; font-weight: 800; color: var(--orange-400); }
+
+.sm .speed, .sm .fast { font-size: 16px; }
+.md .speed, .md .fast { font-size: 22px; }
+.lg .speed, .lg .fast { font-size: 34px; }

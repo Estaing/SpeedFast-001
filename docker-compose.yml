@@ -86,3 +86,14 @@ services:
 
 volumes:
   pgdata:
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: ""  # Empty = use Nginx proxy (/api/* → api:3000)
+    ports:
+      - '80:80'
+    depends_on:
+      - api
+    restart: unless-stopped
