@@ -35,8 +35,14 @@ export function buildApp(opts = {}) {
 
   // --- Security & infra plugins ---
   app.register(helmet, { contentSecurityPolicy: env.NODE_ENV === 'production' });
+  // CORS: in production allow the Vercel frontend + any *.vercel.app preview URLs.
+  // Set FRONTEND_URL env var on Render to your exact Vercel domain once deployed.
   app.register(cors, {
-    origin: env.NODE_ENV === 'production' ? ['https://vinfast.vn', 'https://api.vinfast.vn'] : true,
+    origin: env.NODE_ENV === 'production'
+      ? (process.env.FRONTEND_URL
+          ? [process.env.FRONTEND_URL, /\.vercel\.app$/]
+          : [/\.vercel\.app$/, /\.onrender\.com$/])
+      : true,
     credentials: true,
   });
   app.register(rateLimit, { max: env.RATE_LIMIT_MAX, timeWindow: env.RATE_LIMIT_WINDOW });

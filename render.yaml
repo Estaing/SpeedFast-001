@@ -1,0 +1,69 @@
+# render.yaml — Infrastructure as Code for Render.com
+# Defines the API service + Redis. Postgres is on Neon (external URL).
+# Docs: https://render.com/docs/blueprint-spec
+
+services:
+  # ── Backend API ──────────────────────────────────────────────
+  - type: web
+    name: speedfast-api
+    runtime: node
+    region: oregon
+    plan: free
+    branch: main
+    rootDir: .
+    buildCommand: npm ci && npx prisma generate
+    startCommand: npx prisma migrate deploy && node src/server.js
+    healthCheckPath: /health/live
+    autoDeploy: true
+
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: LOG_LEVEL
+        value: info
+      - key: SERVICE_NAME
+        value: speedfast-api
+      - key: PORT
+        value: 3000
+      - key: ACCESS_TOKEN_TTL
+        value: 15m
+      - key: REFRESH_TOKEN_TTL_SECONDS
+        value: 604800
+
+      # ── Secrets — set these manually in Render dashboard ────
+      # DATABASE_URL  → your Neon PostgreSQL connection string
+      # REDIS_URL     → your Render Key Value connection string
+      # JWT_SECRET    → 32+ char random hex
+      # JWT_REFRESH_SECRET → 32+ char random hex
+
+  # ── Background Worker ────────────────────────────────────────
+  - type: worker
+    name: speedfast-worker
+    runtime: node
+    region: oregon
+    plan: free
+    branch: main
+    rootDir: .
+    buildCommand: npm ci && npx prisma generate
+    startCommand: node src/worker.js
+    autoDeploy: true
+
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: LOG_LEVEL
+        value: info
+      - key: SERVICE_NAME
+        value: speedfast-worker
+      - key: ACCESS_TOKEN_TTL
+        value: 15m
+      - key: REFRESH_TOKEN_TTL_SECONDS
+        value: 604800
+      # Secrets same as API: DATABASE_URL, REDIS_URL, JWT_SECRET, JWT_REFRESH_SECRET
+
+  # ── Redis (Key Value) ─────────────────────────────────────────
+  - type: keyvalue
+    name: speedfast-redis
+    region: oregon
+    plan: free
+    ipAllowList: []   # allow all — internal Render network only

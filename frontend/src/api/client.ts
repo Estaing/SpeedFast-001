@@ -1,7 +1,11 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios'
 import { useAuthStore } from '@/store/auth'
 
-const BASE_URL: string = (import.meta as { env?: { VITE_API_URL?: string } }).env?.VITE_API_URL ?? ''
+// In production on Vercel, API calls go to /api/* which Vercel proxies
+// to the Render backend via vercel.json rewrites.
+// In local dev, Vite proxies /api/* to localhost:3000.
+// So BASE_URL is always empty string — relative paths work in both environments.
+const BASE_URL = ''
 
 export const apiClient = axios.create({
   baseURL: BASE_URL,
@@ -10,7 +14,7 @@ export const apiClient = axios.create({
   withCredentials: false,
 })
 
-// ── Request interceptor: attach access token ──────────────────────────────
+// ── Request: attach Bearer token ─────────────────────────────
 apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = useAuthStore.getState().accessToken
   if (token && config.headers) {
@@ -19,7 +23,7 @@ apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   return config
 })
 
-// ── Response interceptor: silent token refresh on 401 ────────────────────
+// ── Response: silent 401 → refresh → retry ───────────────────
 let isRefreshing = false
 let failedQueue: Array<{ resolve: (v: string) => void; reject: (e: unknown) => void }> = []
 
@@ -41,10 +45,7 @@ apiClient.interceptors.response.use(
     }
 
     const { refreshToken, setTokens, logout } = useAuthStore.getState()
-    if (!refreshToken) {
-      logout()
-      return Promise.reject(error)
-    }
+    if (!refreshToken) { logout(); return Promise.reject(error) }
 
     if (isRefreshing) {
       return new Promise((resolve, reject) => {
@@ -59,7 +60,7 @@ apiClient.interceptors.response.use(
     isRefreshing = true
 
     try {
-      const { data } = await axios.post(`${BASE_URL}/api/v1/auth/refresh`, { refreshToken })
+      const { data } = await axios.post('/api/v1/auth/refresh', { refreshToken })
       setTokens(data.accessToken, data.refreshToken, data.user)
       if (original.headers) original.headers.Authorization = `Bearer ${data.accessToken}`
       processQueue(null, data.accessToken)
