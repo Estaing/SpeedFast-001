@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CUSTOMER
+  ADMIN
+  TECHNICIAN
+}
+
+enum VehicleModel {
+  VF3
+  VF5
+  VF6
+  VF7
+  VF8
+  VF9
+}
+
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  password  String
+  role      Role      @default(CUSTOMER)
+  vehicles  Vehicle[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("users")
+}
+
+model Vehicle {
+  id              String        @id @default(uuid())
+  vin             String        @unique
+  model           VehicleModel
+  batteryCapacity Float
+  ownerId         String
+  owner           User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  chargeStatus    ChargeStatus?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([ownerId])
+  @@map("vehicles")
+}
+
+model ChargeStatus {
+  id           String   @id @default(uuid())
+  vehicleId    String   @unique
+  vehicle      Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  batteryLevel Int      @default(0)
+  isCharging   Boolean  @default(false)
+  rangeKm      Float    @default(0)
+  updatedAt    DateTime @updatedAt
+
+  @@map("charge_statuses")
+}

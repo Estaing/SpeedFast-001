@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Environment — never commit real secrets
+.env
+.env.local
+.env.production
+
+# Build & generated output
+dist/
+coverage/
+*.tsbuildinfo
+
+# Prisma generated client (re-generated from schema on install)
+node_modules/.prisma/
+
+# Logs
+*.log
+logs/
+
+# OS & editor junk
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Docker volumes (if mounted locally)
+pgdata/

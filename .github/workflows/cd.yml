@@ -1,0 +1,34 @@
+name: CD - Deploy
+
+on:
+  workflow_run:
+    workflows: ['CI']
+    types: [completed]
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      # Placeholder deploy step — wire this to your actual target:
+      # Fly.io, Railway, ECS, Kubernetes (kubectl/helm), etc.
+      - name: Deploy
+        run: |
+          echo "Deploying ghcr.io/${{ github.repository }}:${{ github.event.workflow_run.head_sha }}"
+          # Example for Fly.io:
+          # flyctl deploy --image ghcr.io/${{ github.repository }}:${{ github.event.workflow_run.head_sha }}
+
+      - name: Run database migrations
+        run: |
+          echo "npx prisma migrate deploy against production DATABASE_URL"
+        env:
+          DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+
+      - name: Smoke test
+        run: |
+          echo "curl https://api.vinfast.vn/health/ready"

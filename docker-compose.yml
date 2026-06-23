@@ -1,0 +1,88 @@
+services:
+  api:
+    build: .
+    ports:
+      - '3000:3000'
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DATABASE_URL: postgresql://vinfast:vinfast_dev_pw@postgres:5432/vinfast_ev_db?schema=public
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:-dev_only_jwt_secret_replace_me_64_chars_minimum_xxxxxxxxxx}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-dev_only_refresh_secret_replace_me_64_chars_minx}
+      ACCESS_TOKEN_TTL: '15m'
+      REFRESH_TOKEN_TTL_SECONDS: '604800'
+      LOG_LEVEL: info
+      SERVICE_NAME: vinfast-ev-api
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: sh -c "npx prisma migrate deploy && node src/server.js"
+    restart: unless-stopped
+
+  worker:
+    build: .
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://vinfast:vinfast_dev_pw@postgres:5432/vinfast_ev_db?schema=public
+      REDIS_URL: redis://redis:6379
+      # Worker doesn't sign tokens but env.js validates all vars on import.
+      JWT_SECRET: ${JWT_SECRET:-dev_only_jwt_secret_replace_me_64_chars_minimum_xxxxxxxxxx}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-dev_only_refresh_secret_replace_me_64_chars_minx}
+      LOG_LEVEL: info
+      SERVICE_NAME: vinfast-ev-worker
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: node src/worker.js
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: vinfast
+      POSTGRES_PASSWORD: vinfast_dev_pw
+      POSTGRES_DB: vinfast_ev_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U vinfast']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.58
+    ports:
+      - '16686:16686' # Jaeger UI
+      - '4318:4318'   # OTLP HTTP receiver
+    environment:
+      COLLECTOR_OTLP_ENABLED: 'true'
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    ports:
+      - '9090:9090'
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+volumes:
+  pgdata:
